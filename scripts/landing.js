@@ -9,8 +9,11 @@ var animatePoints = function (points) {
         points[index].style.WebkitTransform = "scaleX(1) translateY(0)";
     };
 
-    revealPoint();
+    for (var i = 0; i < points.length; i++) {
+        revealPoint(i);
+    }
 };
+
 
 window.onload = function () {
     if (window.innerHeight > 950) {
