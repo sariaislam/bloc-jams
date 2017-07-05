@@ -5,7 +5,7 @@ var createSongRow = function(songNumber, songName, songLength) {
         '<tr class="album-view-song-item">'
     +   '<td class="song-item-number" data-song-number="' + songNumber + '">' + songNumber + '</td>'
     +   '   <td class="song-item-title">' + songName + '</td>'
-    +   '   <td class="song-item-duration">' + songLength + '</td>'
+    +   '   <td class="song-item-duration">' + filterTimeCode(songLength) + '</td>'
     +   '</td>';
 
     var $row = $(template);
@@ -99,6 +99,7 @@ var updateSeekBarWhileSongPlays = function() {
             var seekBarFillRatio = this.getTime() / this.getDuration();
             var $seekBar = $('.seek-control .seek-bar');
             
+            setCurrentTimeInPlayerBar(this.getTime());
             updateSeekPercentage($seekBar, seekBarFillRatio);
         });
     }
@@ -156,12 +157,14 @@ var trackIndex = function(album, song) {
     return album.songs.indexOf(song);
 };
 
-var updatePlayerSongBar = function () {
-    var currentSongName = currentAlbum.songs[currentlyPlayingSongNumber - 1].title;
+var updatePlayerSongBar = function () { 
+    var songObject = currentAlbum.songs[currentlyPlayingSongNumber - 1];
+    var currentSongName = songObject.title;
 
     $('.artist-song-mobile').text(currentSongName + ' - ' + currentAlbum.artist);
     $('.artist-name').text(currentAlbum.artist);
     $('.song-name').text(currentSongName);
+    setTotalTimeInPlayerBar(songObject.duration);
     $('.main-controls .play-pause').html(playerBarPauseButton);
 };
 
@@ -217,6 +220,19 @@ var nextSong = function() {
 
     $nextSongNumberCell.html(pauseButtonTemplate);
     $lastSongNumberCell.html(lastSongNumber);
+};
+
+var setCurrentTimeInPlayerBar = function(currentTime) {
+    $('.current-time').text(filterTimeCode(currentTime));
+};
+var setTotalTimeInPlayerBar = function(totalTime) {
+  $('.total-time').text(filterTimeCode(totalTime));  
+};
+var filterTimeCode = function(timeInSeconds) {
+    timeInSeconds = parseFloat(timeInSeconds);
+    var minutes = Math.floor(timeInSeconds / 60);
+    var seconds = Math.floor(timeInSeconds % 60);
+    return minutes + ':' + (seconds < 10 ? '0' + seconds : seconds);
 };
 
 var playButtonTemplate = '<a class="album-song-button"><span class="ion-play"></span></a>';
